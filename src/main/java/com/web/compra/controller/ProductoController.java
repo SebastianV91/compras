@@ -51,7 +51,7 @@ public class ProductoController {
     }
 
     @DeleteMapping("/productos/{id}")
-    public ResponseEntity<?> eliminarProducto(@PathVariable("id") Long id){
+    public ResponseEntity<?> eliminarProducto(@PathVariable("id") Long id){git add 
         productoRepository.deleteById(id);
         return new ResponseEntity(new Mensaje("Producto Eliminado"), HttpStatus.OK);
     }
