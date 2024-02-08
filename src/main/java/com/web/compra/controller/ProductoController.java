@@ -27,13 +27,21 @@ public class ProductoController {
 
     @GetMapping("/productos/{id}")
     public ResponseEntity<Producto> buscarPorId(@PathVariable("id") Long id){
+        if(!productoRepository.existsById(id))
+            return new ResponseEntity(new Mensaje("El id del producto buscado no existe"), HttpStatus.NOT_FOUND);
+
         Producto producto = productoRepository.findById(id).get();
         return new ResponseEntity(producto, HttpStatus.OK);
     }
 
     @PostMapping("/productos")
     public ResponseEntity<?> crearProducto(@RequestBody ProductoDto productoDto){
-
+        if(StringUtils.isBlank(productoDto.getNombre()))
+            return new ResponseEntity(new Mensaje("El nombre del producto es obligatorio"), HttpStatus.BAD_REQUEST);
+        if(productoDto.getPrecio()==null || productoDto.getPrecio()<0 )
+            return new ResponseEntity(new Mensaje("El precio del producto debe ser mayor que 0"), HttpStatus.BAD_REQUEST);
+        if(productoRepository.existsByNombre(productoDto.getNombre()))
+            return new ResponseEntity(new Mensaje("El nombre de ese producto ya existe"), HttpStatus.BAD_REQUEST);
         
         Producto producto = new Producto(productoDto.getNombre(), productoDto.getPrecio());
         productoRepository.save(producto);
@@ -42,6 +50,14 @@ public class ProductoController {
 
     @PutMapping("/productos/{id}")
     public ResponseEntity<?> modificarProducto(@PathVariable("id") Long id, @RequestBody ProductoDto productoDto){
+        if(StringUtils.isBlank(productoDto.getNombre()))
+            return new ResponseEntity(new Mensaje("El nombre del producto es obligatorio"), HttpStatus.BAD_REQUEST);
+        if(productoRepository.existsByNombre(productoDto.getNombre()))
+            return new ResponseEntity(new Mensaje("El nombre de ese producto ya existe"), HttpStatus.BAD_REQUEST);
+        if(StringUtils.isBlank(productoDto.getNombre()))
+            return new ResponseEntity(new Mensaje("El nombre del producto es obligatorio"), HttpStatus.BAD_REQUEST);
+        if(productoDto.getPrecio()==null || productoDto.getPrecio()<0 )
+            return new ResponseEntity(new Mensaje("El precio del producto debe ser mayor que 0"), HttpStatus.BAD_REQUEST);
 
         Producto producto = productoRepository.findById(id).get();
         producto.setNombre(productoDto.getNombre());
@@ -51,7 +67,10 @@ public class ProductoController {
     }
 
     @DeleteMapping("/productos/{id}")
-    public ResponseEntity<?> eliminarProducto(@PathVariable("id") Long id){git add 
+    public ResponseEntity<?> eliminarProducto(@PathVariable("id") Long id){
+        if(!productoRepository.existsById(id))
+            return new ResponseEntity(new Mensaje("El id del producto buscado no existe para eliminar"), HttpStatus.NOT_FOUND);
+
         productoRepository.deleteById(id);
         return new ResponseEntity(new Mensaje("Producto Eliminado"), HttpStatus.OK);
     }
