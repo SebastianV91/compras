@@ -1,0 +1,8 @@
+create table prestamo (
+    id int not null auto_increment,
+	isbn varchar(10) null,
+    identificacionusuario varchar(10) null,
+    tipousuario varchar(10) null,
+	fechamaximadevolucion date null,
+    primary key (id)
+);
